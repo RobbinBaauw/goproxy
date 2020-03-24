@@ -1,3 +1,3 @@
-module github.com/finitum/goproxy
+module github.com/timanema/goproxy
 
 go 1.14
