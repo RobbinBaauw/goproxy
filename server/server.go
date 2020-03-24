@@ -30,6 +30,8 @@ func NewServer() *Server {
 
 func (server *Server) StartServer() {
 	// start tcp server
+	log.Print("Listening on 0.0.0.0:12345")
+
 	listener, err := net.Listen("tcp", "0.0.0.0:12345")
 	if err != nil {
 		log.Fatal("Unable to start GoProxy:", err)

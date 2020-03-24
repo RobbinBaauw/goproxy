@@ -14,7 +14,7 @@ type DisconnectPacket struct {
 func NewDisconnectPacket() *DisconnectPacket {
 	packet := new(DisconnectPacket)
 	packet.PacketId = 0
-	packet.Reason = "{\"text\": \"yeet\", \"bold\": \"true\"}"
+	packet.Reason = "{\"text\": \"yeet\", \"bold\": \"true\", \"color\": \"gold\"}"
 
 	return packet
 }
