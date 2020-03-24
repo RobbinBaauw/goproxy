@@ -1,12 +1,11 @@
 package server
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
-	"encoding/pem"
 	"fmt"
 	"github.com/finitum/goproxy/packets"
+	"github.com/finitum/goproxy/util"
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/uuid"
 	"log"
 )
 
@@ -29,54 +28,37 @@ func HandleLoginStart(session *ClientSession) {
 
 	serverId := packets.WriteString("                    ")
 
-	key := getDERKey()
+	key := util.DERPublicKey
 	keyLength := packets.WriteVarInt(len(key))
 
-	verifyTokenLength := packets.WriteVarInt(4)
-	verifyTokenBytes := make([]byte, 4)
+	verifyTokenLength := packets.WriteVarInt(len(util.VerifyToken))
 
-	_, err := rand.Read(verifyTokenBytes)
-	checkError(err)
-
-	packets.Write(1, session.Conn, serverId, keyLength, key, verifyTokenLength, verifyTokenBytes)
+	packets.Write(1, session.Conn, serverId, keyLength, key, verifyTokenLength, util.VerifyToken)
 }
 
 func HandleEncryptionResponse(session *ClientSession) {
-	playerName := packets.ReadString(session.Reader)
-	session.PlayerData.Username = playerName
-	fmt.Println("Player: ", playerName)
+	sharedSecretLength := packets.ReadVarInt(session.Reader)
+	sharedSecret := packets.ReadBytes(session.Reader, sharedSecretLength)
 
-	serverId := packets.WriteString("                    ")
-
-	key := getDERKey()
-	keyLength := packets.WriteVarInt(len(key))
-
-	verifyTokenLength := packets.WriteVarInt(4)
-	verifyTokenBytes := make([]byte, 4)
-
-	_, err := rand.Read(verifyTokenBytes)
-	checkError(err)
-
-	packets.Write(1, session.Conn, serverId, keyLength, key, verifyTokenLength, verifyTokenBytes)
-}
-
-func checkError(err error) {
-	if err != nil {
-		log.Panic("Fatal error ", err.Error())
-	}
-}
-
-func getDERKey() []byte {
-	key, err := rsa.GenerateKey(rand.Reader, 1024)
-	checkError(err)
-
-	asn1Bytes, err := x509.MarshalPKIXPublicKey(&key.PublicKey)
-	checkError(err)
-
-	derKey := &pem.Block{
-		Type:  "PUBLIC KEY",
-		Bytes: asn1Bytes,
+	verifyTokenLength := packets.ReadVarInt(session.Reader)
+	verifyToken := util.DecryptWithPrivateKey(packets.ReadBytes(session.Reader, verifyTokenLength))
+	if !cmp.Equal(verifyToken, util.VerifyToken) {
+		log.Panic("Invalid verify token!")
 	}
 
-	return derKey.Bytes
+	decryptedSharedSecret := util.DecryptWithPrivateKey(sharedSecret)
+	session.PlayerData.SharedSecret = decryptedSharedSecret
+
+	generatedUuid, _ := uuid.NewUUID()
+	uuidBytes := packets.WriteString(generatedUuid.String())
+
+	username := packets.WriteString(session.PlayerData.Username)
+
+	packets.WriteEncrypted(decryptedSharedSecret, 2, session.Conn, uuidBytes, username)
+
+	session.State = StatePlay
 }
+
+
+
+

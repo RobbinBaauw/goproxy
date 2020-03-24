@@ -27,15 +27,19 @@ func ReadVarInt(reader *ByteStreamReader) int {
 
 func ReadString(reader *ByteStreamReader) string {
 	length := ReadVarInt(reader)
+	return string(ReadBytes(reader, length))
+}
 
+func ReadBytes(reader *ByteStreamReader, length int) []byte {
 	message := make([]byte, length)
 
 	for i := 0; i < length; i++ {
 		message[i] = reader.NextByte()
 	}
 
-	return string(message)
+	return message
 }
+
 
 func ReadUnsignedShort(reader *ByteStreamReader) uint16 {
 	byte1 := reader.NextByte()

@@ -35,7 +35,6 @@ func HandleRequest(session *ClientSession) {
 	}
 
 	data, _ := json.Marshal(response)
-
 	packets.Write(0, session.Conn, packets.WriteStringBytes(data))
 }
 

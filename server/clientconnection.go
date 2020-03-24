@@ -16,6 +16,7 @@ type ClientSession struct {
 
 type PlayerData struct {
 	Username string
+	SharedSecret []byte
 }
 
 const (

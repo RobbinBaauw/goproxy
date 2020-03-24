@@ -3,6 +3,7 @@ package packets
 import (
 	"bufio"
 	"fmt"
+	"github.com/finitum/goproxy/util"
 	"log"
 	"net"
 )
@@ -59,7 +60,17 @@ func (r *ByteStreamReader) AllBytes() []byte {
 }
 
 func Write(packetId int, conn net.Conn, data ...[]byte) {
+	message := createPacket(packetId, data...)
+	_, _ = conn.Write(message)
+}
 
+func WriteEncrypted(key []byte, packetId int, conn net.Conn, data ...[]byte) {
+	message := createPacket(packetId, data...)
+	encryptedMessage := util.Encrypt(key, message)
+	_, _ = conn.Write(encryptedMessage)
+}
+
+func createPacket(packetId int, data ...[]byte) []byte {
 	var newData []byte
 	for _, currData := range data {
 		newData = append(newData, currData...)
@@ -76,5 +87,5 @@ func Write(packetId int, conn net.Conn, data ...[]byte) {
 	fmt.Println(string(message))
 	fmt.Println()
 
-	_, _ = conn.Write(message)
+	return message
 }
