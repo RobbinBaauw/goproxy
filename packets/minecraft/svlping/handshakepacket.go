@@ -25,17 +25,11 @@ func (packet *HandshakePacket) Handle(currentSession *session.Session) {
 }
 
 func (packet *HandshakePacket) Read(reader *io.PacketReader) packets.Packet {
-	protocolVersion := reader.ReadVarInt()
-	serverAddrLen := reader.ReadVarInt()
-	serverAddr := reader.ReadString(serverAddrLen)
-	serverPort := reader.ReadUnsignedShort()
-	nextState := reader.ReadVarInt()
-
-	packet.ProtocolVersion = protocolVersion
-	packet.ServerAddrLen = serverAddrLen
-	packet.ServerAddr = serverAddr
-	packet.ServerPort = serverPort
-	packet.NextState = nextState
+	packet.ProtocolVersion = reader.ReadVarInt()
+	packet.ServerAddrLen = reader.ReadVarInt()
+	packet.ServerAddr = reader.ReadString(packet.ServerAddrLen)
+	packet.ServerPort = reader.ReadUnsignedShort()
+	packet.NextState = reader.ReadVarInt()
 
 	return packet
 }

@@ -70,6 +70,10 @@ func (server *Server) readPacket(currentSession *session.Session, packetReader *
 }
 
 func (server *Server) acceptPacket(currentSession *session.Session) {
+	if currentSession.ConnectionClosed {
+		return
+	}
+
 	// create reader and read packer
 	currentSession.Reader.UpdateReader(bufio.NewReader(*currentSession.Connection))
 	packet := server.readPacket(currentSession, currentSession.Reader)

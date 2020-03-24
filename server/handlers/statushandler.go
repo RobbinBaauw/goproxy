@@ -13,6 +13,8 @@ func (handler *StatusHandler) Handle(packetReader *io.PacketReader, packetId int
 	switch packetId {
 	case 0:
 		return new(svlping.RequestPacket).Read(packetReader)
+	case 1:
+		return new(svlping.PingPacket).Read(packetReader)
 	default:
 		log.Panic("Unknown packet id: ", packetId)
 		return nil

@@ -33,7 +33,7 @@ func (reader *PacketReader) safeRead() byte {
 
 	if err != nil {
 		// TODO: Make better or something
-		log.Panic("Could not read byte:", err)
+		log.Panic("Could not read byte: ", err)
 	}
 
 	reader.Len--
@@ -76,4 +76,14 @@ func (reader *PacketReader) ReadUnsignedShort() uint16 {
 	buf2 := reader.safeRead()
 	in := []byte{buf1, buf2}
 	return binary.BigEndian.Uint16(in)
+}
+
+func (reader *PacketReader) ReadLong() int64 {
+	message := make([]byte, 8)
+
+	for i := 0; i < 8; i++ {
+		message[i] = reader.safeRead()
+	}
+
+	return int64(binary.BigEndian.Uint64(message))
 }

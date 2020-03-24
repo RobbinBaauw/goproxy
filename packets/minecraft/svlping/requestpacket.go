@@ -15,9 +15,7 @@ func (packet *RequestPacket) Write(currentSession *session.Session) {
 }
 
 func (packet *RequestPacket) Handle(currentSession *session.Session) {
-	// create response packet
-
-	// send it to the client
+	// send response packet
 	responsePacket := NewResponsePacket()
 	responsePacket.Write(currentSession)
 }

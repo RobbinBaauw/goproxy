@@ -1,6 +1,9 @@
 package io
 
-import "bufio"
+import (
+	"bufio"
+	"encoding/binary"
+)
 
 type PacketWriter struct {
 	writer *bufio.Writer
@@ -56,4 +59,11 @@ func (writer *PacketWriter) WriteString(s string) {
 	writer.WriteVarInt(len)
 
 	writer.write([]byte(s))
+}
+
+func (writer *PacketWriter) WriteLong(value int64) {
+	res := make([]byte, 8)
+
+	binary.BigEndian.PutUint64(res, uint64(value))
+	writer.write(res)
 }

@@ -30,6 +30,7 @@ func NewResponsePacket() *ResponsePacket {
 	data, _ := json.Marshal(response)
 
 	packet := new(ResponsePacket)
+	packet.PacketId = 0
 	packet.jsonResponse = string(data)
 
 	return packet
