@@ -7,16 +7,16 @@ import (
 	"strconv"
 )
 
-func handleHandshakeState(packetId int, session *ClientSession) {
+func HandleHandshakeState(packetId int, session *ClientSession) {
 	if packetId == 0 {
-		handleHandshake(session)
+		HandleHandshake(session)
 		HandleConnection(session)
 	} else {
 		log.Panic("Unknown packet id ", packetId)
 	}
 }
 
-func handleHandshake(session *ClientSession) {
+func HandleHandshake(session *ClientSession) {
 	reader := session.Reader
 
 	protocolVersion := packets.ReadVarInt(reader)

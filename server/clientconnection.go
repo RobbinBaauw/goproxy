@@ -33,11 +33,11 @@ func HandleConnection(session *ClientSession) {
 	fmt.Println("PacketId: ", strconv.Itoa(packetId))
 
 	if session.State == StateHandshaking {
-		handleHandshakeState(packetId, session)
+		HandleHandshakeState(packetId, session)
 	} else if session.State == StateStatus {
-		handleStatusState(packetId, session)
+		HandleStatusState(packetId, session)
 	} else if session.State == StateLogin {
-		handleLoginState(packetId, session)
+		HandleLoginState(packetId, session)
 	}
 }
 

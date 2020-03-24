@@ -19,13 +19,10 @@ func WriteVarInt(value int) []byte {
 
 func WriteString(value string) []byte {
 	bytes := []byte(value)
-	lengthBytes := WriteVarInt(len(bytes))
-
-	return append(lengthBytes, bytes...)
+	return WriteStringBytes(bytes)
 }
 
-func WriteBytes(bytes []byte) []byte {
+func WriteStringBytes(bytes []byte) []byte {
 	lengthBytes := WriteVarInt(len(bytes))
-
 	return append(lengthBytes, bytes...)
 }

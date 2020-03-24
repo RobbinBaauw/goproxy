@@ -58,15 +58,22 @@ func (r *ByteStreamReader) AllBytes() []byte {
 	return result
 }
 
-func Write(packetId int, data []byte, conn net.Conn) {
+func Write(packetId int, conn net.Conn, data ...[]byte) {
+
+	var newData []byte
+	for _, currData := range data {
+		newData = append(newData, currData...)
+	}
+
 	packetIdBytes := WriteVarInt(packetId)
 
-	length := len(packetIdBytes) + len(data)
+	length := len(packetIdBytes) + len(newData)
 	lengthBytes := WriteVarInt(length)
 
-	message := append(lengthBytes, append(packetIdBytes, data...)...)
+	message := append(lengthBytes, append(packetIdBytes, newData...)...)
 
-	fmt.Println("WRITING MESSAGE " + string(message))
+	fmt.Print("WRITING MESSAGE")
+	fmt.Println(string(message))
 	fmt.Println()
 
 	_, _ = conn.Write(message)

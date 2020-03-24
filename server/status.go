@@ -6,18 +6,18 @@ import (
 	"log"
 )
 
-func handleStatusState(packetId int, session *ClientSession) {
+func HandleStatusState(packetId int, session *ClientSession) {
 	if packetId == 0 {
-		handleRequest(session)
+		HandleRequest(session)
 		HandleConnection(session)
 	} else if packetId == 1 {
-		handlePing(session)
+		HandlePing(session)
 	} else {
 		log.Panic("Unknown packet id ", packetId)
 	}
 }
 
-func handleRequest(session *ClientSession) {
+func HandleRequest(session *ClientSession) {
 	response := ListResponse{
 		Version: ListVersion{
 			Name: "KLAPPE",
@@ -36,11 +36,11 @@ func handleRequest(session *ClientSession) {
 
 	data, _ := json.Marshal(response)
 
-	packets.Write(0, packets.WriteBytes(data), session.Conn)
+	packets.Write(0, session.Conn, packets.WriteStringBytes(data))
 }
 
-func handlePing(session *ClientSession) {
-	packets.Write(1, session.Reader.AllBytes(), session.Conn)
+func HandlePing(session *ClientSession) {
+	packets.Write(1, session.Conn, session.Reader.AllBytes())
 	_ = session.Conn.Close()
 }
 
