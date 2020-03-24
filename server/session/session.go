@@ -19,6 +19,13 @@ type Session struct {
 	Reader           *io.PacketReader
 	Writer           *io.PacketWriter
 	ConnectionClosed bool
+	SharedSecret     []byte
+	PlayerData       PlayerData
+}
+
+type PlayerData struct {
+	Username string
+	UUID     string
 }
 
 func NewSession(conn *net.Conn) *Session {
@@ -32,5 +39,5 @@ func NewSession(conn *net.Conn) *Session {
 func (session *Session) Close() {
 	log.Print("Closed connection from: ", (*session.Connection).RemoteAddr().String())
 	session.ConnectionClosed = true
-	(*session.Connection).Close()
+	_ = (*session.Connection).Close()
 }

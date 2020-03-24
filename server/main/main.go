@@ -12,6 +12,6 @@ func main() {
 	}()
 	log.Println("Starting GoProxy")
 
-	server := server.NewServer()
-	server.StartServer()
+	newServer := server.NewServer()
+	newServer.StartServer()
 }

@@ -32,41 +32,45 @@ func (reader *PacketReader) safeRead() byte {
 }
 
 func (reader *PacketReader) ReadVarInt() int {
-	var result = 0
+	numRead := 0
+	result := 0
 	var read byte
-	var i = 0
 
-	// do
-	read = reader.safeRead()
-	val := int(read & 0b01111111)
-	result |= val << (7 * i)
-	i++
-
-	// while
-	for ; (read & 0b10000000) != 0; i++ {
+	for ok := true; ok; ok = (read & 0b10000000) != 0 {
 		read = reader.safeRead()
-		val := int(read & 0b01111111)
-		result |= val << (7 * i)
+
+		value := int(read & 0b01111111)
+		result |= value << (7 * numRead)
+
+		numRead++
+		if numRead > 5 {
+			log.Panic("VARINT READ FAILED")
+		}
 	}
 
 	return result
 }
 
-func (reader *PacketReader) ReadString(len int) string {
-	var res string
-	for i := 0; i < len; i++ {
-		ch := reader.safeRead()
-		res += string(ch)
+func (reader *PacketReader) ReadString() string {
+	length := reader.ReadVarInt()
+	return string(reader.ReadBytes(length))
+}
+
+func (reader *PacketReader) ReadBytes(length int) []byte {
+	message := make([]byte, length)
+
+	for i := 0; i < length; i++ {
+		message[i] = reader.safeRead()
 	}
 
-	return res
+	return message
 }
 
 func (reader *PacketReader) ReadUnsignedShort() uint16 {
-	buf1 := reader.safeRead()
-	buf2 := reader.safeRead()
-	in := []byte{buf1, buf2}
-	return binary.BigEndian.Uint16(in)
+	return binary.BigEndian.Uint16([]byte{
+		reader.safeRead(),
+		reader.safeRead(),
+	})
 }
 
 func (reader *PacketReader) ReadLong() int64 {

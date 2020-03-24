@@ -9,7 +9,6 @@ import (
 type HandshakePacket struct {
 	PacketId        int
 	ProtocolVersion int
-	ServerAddrLen   int
 	ServerAddr      string
 	ServerPort      uint16
 	NextState       int
@@ -27,8 +26,7 @@ func (packet *HandshakePacket) Handle(currentSession *session.Session) {
 func (packet *HandshakePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	packet.PacketId = packetId
 	packet.ProtocolVersion = reader.ReadVarInt()
-	packet.ServerAddrLen = reader.ReadVarInt()
-	packet.ServerAddr = reader.ReadString(packet.ServerAddrLen)
+	packet.ServerAddr = reader.ReadString()
 	packet.ServerPort = reader.ReadUnsignedShort()
 	packet.NextState = reader.ReadVarInt()
 

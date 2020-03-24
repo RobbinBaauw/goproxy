@@ -13,19 +13,13 @@ import (
 )
 
 type Server struct {
-	sessions         []*session.Session
-	handshakeHandler *handlers.HandshakeHandler
-	statusHandler    *handlers.StatusHandler
-	loginHandler     *handlers.LoginHandler
+	sessions    []*session.Session
 }
 
 func NewServer() *Server {
-	server := new(Server)
-	server.handshakeHandler = new(handlers.HandshakeHandler)
-	server.statusHandler = new(handlers.StatusHandler)
-	server.loginHandler = new(handlers.LoginHandler)
-
-	return server
+	return &Server{
+		sessions:    make([]*session.Session, 0),
+	}
 }
 
 func (server *Server) StartServer() {
@@ -50,30 +44,12 @@ func (server *Server) StartServer() {
 
 func (server *Server) acceptConnection(conn net.Conn) {
 	log.Println("Incoming connection from:", conn.RemoteAddr().String())
-	session := session.NewSession(&conn)
-	session.Writer = io.NewPacketWriter(conn)
-	session.Reader = io.NewPacketReader(bufio.NewReader(conn))
+	newSession := session.NewSession(&conn)
+	newSession.Writer = io.NewPacketWriter(conn)
+	newSession.Reader = io.NewPacketReader(bufio.NewReader(conn))
 
-	server.sessions = append(server.sessions, session)
-	server.acceptPacket(session)
-}
-
-func (server *Server) readPacket(currentSession *session.Session, packetReader *io.PacketReader) packets.Packet {
-	len := packetReader.ReadVarInt()
-	packetId := packetReader.ReadVarInt()
-	log.Print("Incoming packet of len ", len, " with id ", packetId)
-
-	switch currentSession.CurrentState {
-	case session.Handshaking:
-		return server.handshakeHandler.Handle(packetReader, packetId)
-	case session.Status:
-		return server.statusHandler.Handle(packetReader, packetId)
-	case session.Login:
-		return server.loginHandler.Handle(packetReader, packetId)
-	default:
-		log.Panic("Unknown session state: ", currentSession.CurrentState)
-		return nil
-	}
+	server.sessions = append(server.sessions, newSession)
+	server.acceptPacket(newSession)
 }
 
 func (server *Server) acceptPacket(currentSession *session.Session) {
@@ -82,7 +58,7 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 			log.Print("Client ", (*currentSession.Connection).RemoteAddr().String(), " unexpectedly closed the connection")
 		}
 
-		//TODO: Remove session from memory
+		// TODO: Remove session from memory
 	}()
 
 	for {
@@ -99,5 +75,23 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 
 		// handle packet
 		packet.Handle(currentSession)
+	}
+}
+
+func (server *Server) readPacket(currentSession *session.Session, packetReader *io.PacketReader) packets.Packet {
+	packetLen := packetReader.ReadVarInt()
+	packetId := packetReader.ReadVarInt()
+	log.Print("Incoming packet of len ", packetLen, " with id ", packetId)
+
+	switch currentSession.CurrentState {
+	case session.Handshaking:
+		return handlers.HandleHandshake(packetReader, packetId)
+	case session.Status:
+		return handlers.HandleStatus(packetReader, packetId)
+	case session.Login:
+		return handlers.HandleLogin(packetReader, packetId)
+	default:
+		log.Panic("Unknown session state: ", currentSession.CurrentState)
+		return nil
 	}
 }

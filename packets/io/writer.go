@@ -2,6 +2,7 @@ package io
 
 import (
 	"encoding/binary"
+	"github.com/timanema/goproxy/util/encryption"
 	"log"
 	"net"
 )
@@ -12,23 +13,26 @@ type PacketWriter struct {
 }
 
 func NewPacketWriter(conn net.Conn) *PacketWriter {
-	packetWriter := new(PacketWriter)
-	packetWriter.conn = conn
-	packetWriter.data = make([]byte, 0)
-
-	return packetWriter
+	return &PacketWriter{
+		conn: conn,
+		data: make([]byte, 0),
+	}
 }
 
-func (writer *PacketWriter) Flush() {
+func (writer *PacketWriter) Flush(encryptionKey *[]byte) {
 	writer.data = append(writer.getVarInt(len(writer.data)), writer.data...)
 
 	log.Print("Sending raw: ", writer.data)
 
-	writer.conn.Write(writer.data)
+	if encryptionKey != nil {
+		writer.data = encryption.Encrypt(encryptionKey, &writer.data)
+	}
+
+	_, _ = writer.conn.Write(writer.data)
 	writer.data = make([]byte, 0)
 }
 
-func (writer *PacketWriter) write(data []byte) {
+func (writer *PacketWriter) WriteBytes(data []byte) {
 	writer.data = append(writer.data, data...)
 }
 
@@ -50,21 +54,19 @@ func (writer *PacketWriter) getVarInt(value int) []byte {
 }
 
 func (writer *PacketWriter) WriteVarInt(value int) {
-	writer.write(writer.getVarInt(value))
+	writer.WriteBytes(writer.getVarInt(value))
 }
 
 func (writer *PacketWriter) WriteString(s string) {
-	len := len(s)
+	stringLen := len(s)
 
-	// write len of string
-	writer.WriteVarInt(len)
-
-	writer.write([]byte(s))
+	writer.WriteVarInt(stringLen)
+	writer.WriteBytes([]byte(s))
 }
 
 func (writer *PacketWriter) WriteLong(value int64) {
 	res := make([]byte, 8)
 
 	binary.BigEndian.PutUint64(res, uint64(value))
-	writer.write(res)
+	writer.WriteBytes(res)
 }

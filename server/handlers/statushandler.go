@@ -7,9 +7,7 @@ import (
 	"log"
 )
 
-type StatusHandler struct{}
-
-func (handler *StatusHandler) Handle(packetReader *io.PacketReader, packetId int) packets.Packet {
+func HandleStatus(packetReader *io.PacketReader, packetId int) packets.Packet {
 	switch packetId {
 	case 0:
 		return new(svlping.RequestPacket).Read(packetId, packetReader)

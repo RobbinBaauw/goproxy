@@ -7,9 +7,7 @@ import (
 	"log"
 )
 
-type HandshakeHandler struct{}
-
-func (handler *HandshakeHandler) Handle(packetReader *io.PacketReader, packetId int) packets.Packet {
+func HandleHandshake(packetReader *io.PacketReader, packetId int) packets.Packet {
 	switch packetId {
 	case 0:
 		return new(svlping.HandshakePacket).Read(packetId, packetReader)

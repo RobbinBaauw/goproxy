@@ -20,5 +20,5 @@ func NewPongPacket(payload int64) *PongPacket {
 func (packet *PongPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteLong(packet.Payload)
-	currentSession.Writer.Flush()
+	currentSession.Writer.Flush(nil)
 }

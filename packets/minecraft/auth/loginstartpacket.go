@@ -13,31 +13,38 @@ type LoginStartPacket struct {
 
 func NewLoginStartPacket(name string) *LoginStartPacket {
 	//TODO: Enforce max len name
-	packet := new(LoginStartPacket)
-	packet.PacketId = 0
-	packet.Name = name
-
-	return packet
+	return &LoginStartPacket{
+		PacketId: 0,
+		Name:     name,
+	}
 }
 
 func (packet *LoginStartPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	packet.PacketId = packetId
-	packet.Name = reader.ReadString(reader.ReadVarInt())
+	packet.Name = reader.ReadString()
 
 	return packet
 }
 
 func (packet *LoginStartPacket) Handle(currentSession *session.Session) {
-	// send a disconnect packet for now
-	disconnectPacket := NewDisconnectPacket()
-	disconnectPacket.Write(currentSession)
+	currentSession.PlayerData.Username = packet.Name
 
-	// close connection
-	currentSession.Close()
+	shouldKick := false // TODO
+	if shouldKick {
+		// send a disconnect packet for now
+		disconnectPacket := NewDisconnectPacket()
+		disconnectPacket.Write(currentSession)
+
+		// close connection
+		currentSession.Close()
+	} else {
+		encryptionRequestPacket := NewEncryptionRequestPacket()
+		encryptionRequestPacket.Write(currentSession)
+	}
 }
 
 func (packet *LoginStartPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteString(packet.Name)
-	currentSession.Writer.Flush()
+	currentSession.Writer.Flush(nil)
 }
