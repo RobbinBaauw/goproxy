@@ -1,30 +1,31 @@
 package io
 
 import (
-	"bufio"
 	"encoding/binary"
+	"log"
+	"net"
 )
 
 type PacketWriter struct {
-	writer *bufio.Writer
-	data   []byte
+	conn net.Conn
+	data []byte
 }
 
-func NewPacketWriter(writer *bufio.Writer) *PacketWriter {
+func NewPacketWriter(conn net.Conn) *PacketWriter {
 	packetWriter := new(PacketWriter)
-	packetWriter.writer = writer
+	packetWriter.conn = conn
 	packetWriter.data = make([]byte, 0)
 
 	return packetWriter
 }
 
-func (writer *PacketWriter) UpdateWriter(newWriter *bufio.Writer) {
-	writer.writer = newWriter
-}
-
 func (writer *PacketWriter) Flush() {
-	writer.writer.Write(append(writer.getVarInt(len(writer.data)), writer.data...))
-	writer.writer.Flush()
+	writer.data = append(writer.getVarInt(len(writer.data)), writer.data...)
+
+	log.Print("Sending raw: ", writer.data)
+
+	writer.conn.Write(writer.data)
+	writer.data = make([]byte, 0)
 }
 
 func (writer *PacketWriter) write(data []byte) {

@@ -12,9 +12,9 @@ type StatusHandler struct{}
 func (handler *StatusHandler) Handle(packetReader *io.PacketReader, packetId int) packets.Packet {
 	switch packetId {
 	case 0:
-		return new(svlping.RequestPacket).Read(packetReader)
+		return new(svlping.RequestPacket).Read(packetId, packetReader)
 	case 1:
-		return new(svlping.PingPacket).Read(packetReader)
+		return new(svlping.PingPacket).Read(packetId, packetReader)
 	default:
 		log.Panic("Unknown packet id: ", packetId)
 		return nil

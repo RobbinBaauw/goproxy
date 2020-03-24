@@ -20,6 +20,7 @@ func (packet *RequestPacket) Handle(currentSession *session.Session) {
 	responsePacket.Write(currentSession)
 }
 
-func (packet *RequestPacket) Read(reader *io.PacketReader) packets.Packet {
+func (packet *RequestPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+	packet.PacketId = packetId
 	return packet
 }

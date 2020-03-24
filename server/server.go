@@ -47,7 +47,7 @@ func (server *Server) StartServer() {
 func (server *Server) acceptConnection(conn net.Conn) {
 	log.Println("Incoming connection from:", conn.RemoteAddr().String())
 	session := session.NewSession(&conn)
-	session.Writer = io.NewPacketWriter(bufio.NewWriter(conn))
+	session.Writer = io.NewPacketWriter(conn)
 	session.Reader = io.NewPacketReader(bufio.NewReader(conn))
 
 	server.sessions = append(server.sessions, session)
@@ -55,8 +55,9 @@ func (server *Server) acceptConnection(conn net.Conn) {
 }
 
 func (server *Server) readPacket(currentSession *session.Session, packetReader *io.PacketReader) packets.Packet {
-	log.Print("Incoming packet of len ", packetReader.Len)
+	len := packetReader.ReadVarInt()
 	packetId := packetReader.ReadVarInt()
+	log.Print("Incoming packet of len ", len, " with id ", packetId)
 
 	switch currentSession.CurrentState {
 	case session.Handshaking:
@@ -70,20 +71,27 @@ func (server *Server) readPacket(currentSession *session.Session, packetReader *
 }
 
 func (server *Server) acceptPacket(currentSession *session.Session) {
-	if currentSession.ConnectionClosed {
-		return
+	defer func() {
+		if r := recover(); r != nil {
+			log.Print("Client ", (*currentSession.Connection).RemoteAddr().String(), " unexpectedly closed the connection")
+		}
+
+		//TODO: Remove session from memory
+	}()
+
+	for {
+		if currentSession.ConnectionClosed {
+			break
+		}
+
+		// create reader and read packer
+		packet := server.readPacket(currentSession, currentSession.Reader)
+
+		// debug prints
+		out, _ := json.Marshal(packet)
+		log.Println("Got packet:", string(out), " of type ", reflect.TypeOf(packet))
+
+		// handle packet
+		packet.Handle(currentSession)
 	}
-
-	// create reader and read packer
-	currentSession.Reader.UpdateReader(bufio.NewReader(*currentSession.Connection))
-	packet := server.readPacket(currentSession, currentSession.Reader)
-
-	// handle
-	packet.Handle(currentSession)
-
-	// debug prints
-	out, _ := json.Marshal(packet)
-	log.Println("Got packet:", string(out), " of type ", reflect.TypeOf(packet))
-
-	server.acceptPacket(currentSession)
 }

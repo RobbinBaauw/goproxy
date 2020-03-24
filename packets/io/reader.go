@@ -8,7 +8,6 @@ import (
 
 type PacketReader struct {
 	reader *bufio.Reader
-	Len    int
 }
 
 func NewPacketReader(reader *bufio.Reader) *PacketReader {
@@ -20,23 +19,15 @@ func NewPacketReader(reader *bufio.Reader) *PacketReader {
 
 func (reader *PacketReader) UpdateReader(newReader *bufio.Reader) {
 	reader.reader = newReader
-	reader.Len = 5 // make sure the first varint can be read
-	reader.Len = reader.ReadVarInt()
 }
 
 func (reader *PacketReader) safeRead() byte {
-	if reader.Len == 0 {
-		log.Panic("Attempted to read beyond packet!")
-	}
-
 	res, err := reader.reader.ReadByte()
 
 	if err != nil {
-		// TODO: Make better or something
 		log.Panic("Could not read byte: ", err)
 	}
 
-	reader.Len--
 	return res
 }
 

@@ -24,7 +24,8 @@ func (packet *HandshakePacket) Handle(currentSession *session.Session) {
 	currentSession.CurrentState = packet.NextState
 }
 
-func (packet *HandshakePacket) Read(reader *io.PacketReader) packets.Packet {
+func (packet *HandshakePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+	packet.PacketId = packetId
 	packet.ProtocolVersion = reader.ReadVarInt()
 	packet.ServerAddrLen = reader.ReadVarInt()
 	packet.ServerAddr = reader.ReadString(packet.ServerAddrLen)

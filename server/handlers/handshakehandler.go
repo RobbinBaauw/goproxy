@@ -12,7 +12,7 @@ type HandshakeHandler struct{}
 func (handler *HandshakeHandler) Handle(packetReader *io.PacketReader, packetId int) packets.Packet {
 	switch packetId {
 	case 0:
-		return new(svlping.HandshakePacket).Read(packetReader)
+		return new(svlping.HandshakePacket).Read(packetId, packetReader)
 	default:
 		log.Panic("Unknown packet id: ", packetId)
 		return nil
