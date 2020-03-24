@@ -36,7 +36,7 @@ func main() {
 func handleConnection(conn *ClientConnection) {
 	// Length
 	length := readVarInt(&ByteStreamReader{conn.reader})
-	
+
 	// Message
 	message := make([]byte, length)
 
