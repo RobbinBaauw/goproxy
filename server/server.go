@@ -16,12 +16,14 @@ type Server struct {
 	sessions         []*session.Session
 	handshakeHandler *handlers.HandshakeHandler
 	statusHandler    *handlers.StatusHandler
+	loginHandler     *handlers.LoginHandler
 }
 
 func NewServer() *Server {
 	server := new(Server)
 	server.handshakeHandler = new(handlers.HandshakeHandler)
 	server.statusHandler = new(handlers.StatusHandler)
+	server.loginHandler = new(handlers.LoginHandler)
 
 	return server
 }
@@ -64,6 +66,8 @@ func (server *Server) readPacket(currentSession *session.Session, packetReader *
 		return server.handshakeHandler.Handle(packetReader, packetId)
 	case session.Status:
 		return server.statusHandler.Handle(packetReader, packetId)
+	case session.Login:
+		return server.loginHandler.Handle(packetReader, packetId)
 	default:
 		log.Panic("Unknown session state: ", currentSession.CurrentState)
 		return nil

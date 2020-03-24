@@ -22,7 +22,7 @@ func NewResponsePacket() *ResponsePacket {
 			Sample: []ListPlayerSample{},
 		},
 		Description: ListDescription{
-			Text: "Klappe",
+			Text: "\u00A7bKlappe",
 		},
 		Favicon: "",
 	}
