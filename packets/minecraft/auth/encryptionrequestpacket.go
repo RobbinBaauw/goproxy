@@ -37,10 +37,6 @@ func (packet *EncryptionRequestPacket) HandleRead(currentSession *session.Sessio
 	return nil
 }
 
-func (packet *EncryptionRequestPacket) HandleWrite(currentSession *session.Session) {
-
-}
-
 func (packet *EncryptionRequestPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteString(packet.ServerId)
@@ -53,3 +49,7 @@ func (packet *EncryptionRequestPacket) Write(currentSession *session.Session) {
 
 	currentSession.Writer.Flush(nil)
 }
+
+func (packet *EncryptionRequestPacket) HandlePreWrite(currentSession *session.Session) {}
+
+func (packet *EncryptionRequestPacket) HandleWrite(currentSession *session.Session) {}

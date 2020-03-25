@@ -55,7 +55,9 @@ func (server *Server) acceptConnection(conn net.Conn) {
 func (server *Server) acceptPacket(currentSession *session.Session) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Print("Client ", (*currentSession.Connection).RemoteAddr().String(), " unexpectedly closed the connection")
+			addr := (*currentSession.Connection).RemoteAddr().String()
+			log.Print("Error from client (", addr, "): ", r)
+			log.Print("Client ", addr, " unexpectedly closed the connection")
 		}
 
 		delete(server.sessions, currentSession.SessionId)
@@ -67,8 +69,8 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 		}
 
 		// create reader and read packet
-		packet := server.readPacket(currentSession, currentSession.Reader)
-
+		packet, packetId := server.readPacket(currentSession, currentSession.Reader)
+		packet.Read(packetId, currentSession.Reader)
 		// debug prints
 		out, _ := json.Marshal(packet)
 		log.Println("Got packet:", string(out), " of type ", reflect.TypeOf(packet))
@@ -76,29 +78,30 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 		// handle packet
 		responsePacket := packet.HandleRead(currentSession)
 
-		//TODO: Maybe make a HandlePreWrite()?
-		// send response packet it needed
+		// send response packet if needed
 		if responsePacket != nil {
+			responsePacket.HandlePreWrite(currentSession)
 			responsePacket.Write(currentSession)
 			responsePacket.HandleWrite(currentSession)
 		}
 	}
 }
 
-func (server *Server) readPacket(currentSession *session.Session, packetReader *io.PacketReader) packets.Packet {
+func (server *Server) readPacket(currentSession *session.Session, packetReader *io.PacketReader) (packets.Packet, int) {
 	packetLen := packetReader.ReadVarInt()
 	packetId := packetReader.ReadVarInt()
 	log.Print("Incoming packet of len ", packetLen, " with id ", packetId)
 
 	switch currentSession.CurrentState {
 	case session.Handshaking:
-		return handlers.HandleHandshake(packetReader, packetId)
+		return handlers.HandleHandshake(packetId), packetId
 	case session.Status:
-		return handlers.HandleStatus(packetReader, packetId)
+		return handlers.HandleStatus(packetId), packetId
 	case session.Login:
-		return handlers.HandleLogin(packetReader, packetId)
+		return handlers.HandleLogin(packetId), packetId
 	default:
 		log.Panic("Unknown session state: ", currentSession.CurrentState)
-		return nil
+		return nil, 0
 	}
+	return nil, 0
 }

@@ -18,20 +18,20 @@ func NewPongPacket(payload int64) packets.Packet {
 	}
 }
 
+func (packet *PongPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {}
+
 func (packet *PongPacket) HandleRead(currentSession *session.Session) packets.Packet {
 	return nil
-}
-
-func (packet *PongPacket) HandleWrite(currentSession *session.Session) {
-	currentSession.Close()
-}
-
-func (packet *PongPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
-	panic("implement me")
 }
 
 func (packet *PongPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteLong(packet.Payload)
 	currentSession.Writer.Flush(nil)
+}
+
+func (packet *PongPacket) HandlePreWrite(currentSession *session.Session) {}
+
+func (packet *PongPacket) HandleWrite(currentSession *session.Session) {
+	currentSession.Close()
 }

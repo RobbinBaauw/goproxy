@@ -7,6 +7,33 @@ import (
 	"github.com/timanema/goproxy/server/session"
 )
 
+type ListResponse struct {
+	Version     ListVersion     `json:"version"`
+	Players     ListPlayers     `json:"players"`
+	Description ListDescription `json:"description"`
+	Favicon     string          `json:"favicon"`
+}
+
+type ListVersion struct {
+	Name     string `json:"name"`
+	Protocol int    `json:"protocol"`
+}
+
+type ListPlayers struct {
+	Max    int                `json:"max"`
+	Online int                `json:"online"`
+	Sample []ListPlayerSample `json:"sample"`
+}
+
+type ListPlayerSample struct {
+	Name string `json:"name"`
+	Id   string `json:"id"`
+}
+
+type ListDescription struct {
+	Text string `json:"text"`
+}
+
 type ResponsePacket struct {
 	PacketId     int
 	jsonResponse string
@@ -37,15 +64,11 @@ func NewResponsePacket() packets.Packet {
 	}
 }
 
-func (packet *ResponsePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
-	panic("implement me")
-}
+func (packet *ResponsePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {}
 
 func (packet *ResponsePacket) HandleRead(currentSession *session.Session) packets.Packet {
 	return nil
 }
-
-func (packet *ResponsePacket) HandleWrite(currentSession *session.Session) {}
 
 func (packet *ResponsePacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
@@ -53,29 +76,5 @@ func (packet *ResponsePacket) Write(currentSession *session.Session) {
 	currentSession.Writer.Flush(nil)
 }
 
-type ListResponse struct {
-	Version     ListVersion     `json:"version"`
-	Players     ListPlayers     `json:"players"`
-	Description ListDescription `json:"description"`
-	Favicon     string          `json:"favicon"`
-}
-
-type ListVersion struct {
-	Name     string `json:"name"`
-	Protocol int    `json:"protocol"`
-}
-
-type ListPlayers struct {
-	Max    int                `json:"max"`
-	Online int                `json:"online"`
-	Sample []ListPlayerSample `json:"sample"`
-}
-
-type ListPlayerSample struct {
-	Name string `json:"name"`
-	Id   string `json:"id"`
-}
-
-type ListDescription struct {
-	Text string `json:"text"`
-}
+func (packet *ResponsePacket) HandlePreWrite(currentSession *session.Session) {}
+func (packet *ResponsePacket) HandleWrite(currentSession *session.Session)    {}

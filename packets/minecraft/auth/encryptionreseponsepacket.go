@@ -50,11 +50,10 @@ func (packet *EncryptionResponsePacket) HandleRead(currentSession *session.Sessi
 	return successPacket
 }
 
-func (packet *EncryptionResponsePacket) HandleWrite(currentSession *session.Session) {
-
-}
-
 func (packet *EncryptionResponsePacket) Write(currentSession *session.Session) {
 	// TODO
-	log.Panic("TODO!")
 }
+
+func (packet *EncryptionResponsePacket) HandlePreWrite(currentSession *session.Session) {}
+
+func (packet *EncryptionResponsePacket) HandleWrite(currentSession *session.Session) {}

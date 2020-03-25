@@ -14,21 +14,6 @@ type HandshakePacket struct {
 	NextState       int
 }
 
-func (packet *HandshakePacket) HandleRead(currentSession *session.Session) packets.Packet {
-	// update state
-	currentSession.CurrentState = packet.NextState
-
-	return nil
-}
-
-func (packet *HandshakePacket) HandleWrite(currentSession *session.Session) {
-	panic("implement me")
-}
-
-func (packet *HandshakePacket) Write(currentSession *session.Session) {
-	panic("implement me")
-}
-
 func (packet *HandshakePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	packet.PacketId = packetId
 	packet.ProtocolVersion = reader.ReadVarInt()
@@ -38,3 +23,16 @@ func (packet *HandshakePacket) Read(packetId int, reader *io.PacketReader) packe
 
 	return packet
 }
+
+func (packet *HandshakePacket) HandleRead(currentSession *session.Session) packets.Packet {
+	// update state
+	currentSession.CurrentState = packet.NextState
+
+	return nil
+}
+
+func (packet *HandshakePacket) Write(currentSession *session.Session) {}
+
+func (packet *HandshakePacket) HandlePreWrite(currentSession *session.Session) {}
+
+func (packet *HandshakePacket) HandleWrite(currentSession *session.Session) {}

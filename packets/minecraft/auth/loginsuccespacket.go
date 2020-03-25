@@ -31,13 +31,15 @@ func (packet *LoginSuccessPacket) HandleRead(currentSession *session.Session) pa
 	return nil
 }
 
-func (packet *LoginSuccessPacket) HandleWrite(currentSession *session.Session) {
-	currentSession.CurrentState = session.Play
-}
-
 func (packet *LoginSuccessPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteString(packet.Name)
 	currentSession.Writer.WriteString(packet.UUID)
 	currentSession.Writer.Flush(&currentSession.SharedSecret)
 }
+
+func (packet *LoginSuccessPacket) HandlePreWrite(currentSession *session.Session) {
+	currentSession.CurrentState = session.Play
+}
+
+func (packet *LoginSuccessPacket) HandleWrite(currentSession *session.Session) {}

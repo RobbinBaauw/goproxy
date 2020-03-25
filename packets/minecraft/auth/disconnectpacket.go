@@ -30,12 +30,14 @@ func (packet *DisconnectPacket) HandleRead(currentSession *session.Session) pack
 	return nil
 }
 
-func (packet *DisconnectPacket) HandleWrite(currentSession *session.Session) {
-	currentSession.Close()
-}
-
 func (packet *DisconnectPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteString(packet.Reason)
 	currentSession.Writer.Flush(nil)
+}
+
+func (packet *DisconnectPacket) HandlePreWrite(currentSession *session.Session) {}
+
+func (packet *DisconnectPacket) HandleWrite(currentSession *session.Session) {
+	currentSession.Close()
 }
