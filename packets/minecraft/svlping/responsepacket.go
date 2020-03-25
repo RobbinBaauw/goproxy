@@ -2,6 +2,8 @@ package svlping
 
 import (
 	"encoding/json"
+	"github.com/timanema/goproxy/packets"
+	"github.com/timanema/goproxy/packets/io"
 	"github.com/timanema/goproxy/server/session"
 )
 
@@ -10,7 +12,7 @@ type ResponsePacket struct {
 	jsonResponse string
 }
 
-func NewResponsePacket() *ResponsePacket {
+func NewResponsePacket() packets.Packet {
 	response := ListResponse{
 		Version: ListVersion{
 			Name:     "KLAPPE",
@@ -34,6 +36,16 @@ func NewResponsePacket() *ResponsePacket {
 		jsonResponse: string(data),
 	}
 }
+
+func (packet *ResponsePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+	panic("implement me")
+}
+
+func (packet *ResponsePacket) HandleRead(currentSession *session.Session) {
+	panic("implement me")
+}
+
+func (packet *ResponsePacket) HandleWrite(currentSession *session.Session) {}
 
 func (packet *ResponsePacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)

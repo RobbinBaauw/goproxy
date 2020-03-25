@@ -17,7 +17,7 @@ type EncryptionRequestPacket struct {
 	VerifyToken       []byte
 }
 
-func NewEncryptionRequestPacket() *EncryptionRequestPacket {
+func NewEncryptionRequestPacket() packets.Packet {
 	return &EncryptionRequestPacket{
 		PacketId:          1,
 		ServerId:          "",
@@ -33,8 +33,12 @@ func (packet *EncryptionRequestPacket) Read(packetId int, reader *io.PacketReade
 	return nil
 }
 
-func (packet *EncryptionRequestPacket) Handle(currentSession *session.Session) {
+func (packet *EncryptionRequestPacket) HandleRead(currentSession *session.Session) {
+	panic("implement me")
+}
 
+func (packet *EncryptionRequestPacket) HandleWrite(currentSession *session.Session) {
+	panic("implement me")
 }
 
 func (packet *EncryptionRequestPacket) Write(currentSession *session.Session) {

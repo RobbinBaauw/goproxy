@@ -10,14 +10,18 @@ type RequestPacket struct {
 	PacketId int
 }
 
-func (packet *RequestPacket) Write(currentSession *session.Session) {
-	panic("implement me")
-}
-
-func (packet *RequestPacket) Handle(currentSession *session.Session) {
+func (packet *RequestPacket) HandleRead(currentSession *session.Session) {
 	// send response packet
 	responsePacket := NewResponsePacket()
 	responsePacket.Write(currentSession)
+}
+
+func (packet *RequestPacket) HandleWrite(currentSession *session.Session) {
+	panic("implement me")
+}
+
+func (packet *RequestPacket) Write(currentSession *session.Session) {
+	panic("implement me")
 }
 
 func (packet *RequestPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {

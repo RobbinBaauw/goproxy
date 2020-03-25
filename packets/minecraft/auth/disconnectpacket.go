@@ -11,7 +11,7 @@ type DisconnectPacket struct {
 	Reason   string
 }
 
-func NewDisconnectPacket() *DisconnectPacket {
+func NewDisconnectPacket() packets.Packet {
 	packet := new(DisconnectPacket)
 	packet.PacketId = 0
 	packet.Reason = "{\"text\": \"yeet\", \"bold\": \"true\", \"color\": \"gold\"}"
@@ -26,8 +26,12 @@ func (packet *DisconnectPacket) Read(packetId int, reader *io.PacketReader) pack
 	return packet
 }
 
-func (packet *DisconnectPacket) Handle(currentSession *session.Session) {
-	// TODO
+func (packet *DisconnectPacket) HandleRead(currentSession *session.Session) {
+	panic("implement me")
+}
+
+func (packet *DisconnectPacket) HandleWrite(currentSession *session.Session) {
+	panic("implement me")
 }
 
 func (packet *DisconnectPacket) Write(currentSession *session.Session) {

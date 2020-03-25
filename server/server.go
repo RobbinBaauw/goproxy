@@ -13,12 +13,12 @@ import (
 )
 
 type Server struct {
-	sessions    map[string]*session.Session
+	sessions map[string]*session.Session
 }
 
 func NewServer() *Server {
 	return &Server{
-		sessions:    make(map[string]*session.Session),
+		sessions: make(map[string]*session.Session),
 	}
 }
 
@@ -74,7 +74,7 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 		log.Println("Got packet:", string(out), " of type ", reflect.TypeOf(packet))
 
 		// handle packet
-		packet.Handle(currentSession)
+		packet.HandleRead(currentSession)
 	}
 }
 

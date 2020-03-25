@@ -11,7 +11,7 @@ type LoginStartPacket struct {
 	Name     string
 }
 
-func NewLoginStartPacket(name string) *LoginStartPacket {
+func NewLoginStartPacket(name string) packets.Packet {
 	//TODO: Enforce max len name
 	return &LoginStartPacket{
 		PacketId: 0,
@@ -26,7 +26,7 @@ func (packet *LoginStartPacket) Read(packetId int, reader *io.PacketReader) pack
 	return packet
 }
 
-func (packet *LoginStartPacket) Handle(currentSession *session.Session) {
+func (packet *LoginStartPacket) HandleRead(currentSession *session.Session) {
 	currentSession.PlayerData.Username = packet.Name
 
 	shouldKick := false // TODO
@@ -41,6 +41,10 @@ func (packet *LoginStartPacket) Handle(currentSession *session.Session) {
 		encryptionRequestPacket := NewEncryptionRequestPacket()
 		encryptionRequestPacket.Write(currentSession)
 	}
+}
+
+func (packet *LoginStartPacket) HandleWrite(currentSession *session.Session) {
+	panic("implement me")
 }
 
 func (packet *LoginStartPacket) Write(currentSession *session.Session) {

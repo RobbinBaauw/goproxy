@@ -12,20 +12,24 @@ type PingPacket struct {
 	Payload  int64
 }
 
-func (packet *PingPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
-	packet.PacketId = packetId
-	packet.Payload = reader.ReadLong()
-
-	return packet
-}
-
-func (packet *PingPacket) Handle(currentSession *session.Session) {
+func (packet *PingPacket) HandleRead(currentSession *session.Session) {
 	// send pong packet
 	pongPacket := NewPongPacket(packet.Payload)
 	pongPacket.Write(currentSession)
 
 	// close connection
 	currentSession.Close()
+}
+
+func (packet *PingPacket) HandleWrite(currentSession *session.Session) {
+	panic("implement me")
+}
+
+func (packet *PingPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+	packet.PacketId = packetId
+	packet.Payload = reader.ReadLong()
+
+	return packet
 }
 
 func (packet *PingPacket) Write(currentSession *session.Session) {

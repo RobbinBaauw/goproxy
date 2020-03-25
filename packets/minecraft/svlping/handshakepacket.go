@@ -14,13 +14,17 @@ type HandshakePacket struct {
 	NextState       int
 }
 
-func (packet *HandshakePacket) Write(currentSession *session.Session) {
+func (packet *HandshakePacket) HandleRead(currentSession *session.Session) {
+	// update state
+	currentSession.CurrentState = packet.NextState
+}
+
+func (packet *HandshakePacket) HandleWrite(currentSession *session.Session) {
 	panic("implement me")
 }
 
-func (packet *HandshakePacket) Handle(currentSession *session.Session) {
-	// update state
-	currentSession.CurrentState = packet.NextState
+func (packet *HandshakePacket) Write(currentSession *session.Session) {
+	panic("implement me")
 }
 
 func (packet *HandshakePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
