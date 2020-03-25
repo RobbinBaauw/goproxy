@@ -6,9 +6,10 @@ import (
 )
 
 type Packet interface {
+	PreRead(currentSession *session.Session)
 	Read(packetId int, reader *io.PacketReader) Packet
-	HandleRead(currentSession *session.Session) Packet
+	PostRead(currentSession *session.Session) Packet
+	PreWrite(currentSession *session.Session)
 	Write(currentSession *session.Session)
-	HandlePreWrite(currentSession *session.Session)
-	HandleWrite(currentSession *session.Session)
+	PostWrite(currentSession *session.Session)
 }

@@ -68,21 +68,27 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 			break
 		}
 
-		// create reader and read packet
+		// get packet id and packet
 		packet, packetId := server.readPacket(currentSession, currentSession.Reader)
+
+		// do any preread events
+		packet.PreRead(currentSession)
+
+		// read packet data
 		packet.Read(packetId, currentSession.Reader)
+
 		// debug prints
 		out, _ := json.Marshal(packet)
 		log.Println("Got packet:", string(out), " of type ", reflect.TypeOf(packet))
 
-		// handle packet
-		responsePacket := packet.HandleRead(currentSession)
+		// do any postread events and get resulting reponse
+		responsePacket := packet.PostRead(currentSession)
 
 		// send response packet if needed
 		if responsePacket != nil {
-			responsePacket.HandlePreWrite(currentSession)
+			responsePacket.PreWrite(currentSession)
 			responsePacket.Write(currentSession)
-			responsePacket.HandleWrite(currentSession)
+			responsePacket.PostWrite(currentSession)
 		}
 	}
 }

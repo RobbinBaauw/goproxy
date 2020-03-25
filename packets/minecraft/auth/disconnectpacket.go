@@ -19,6 +19,8 @@ func NewDisconnectPacket() packets.Packet {
 	return packet
 }
 
+func (packet *DisconnectPacket) PreRead(currentSession *session.Session) {}
+
 func (packet *DisconnectPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	packet.PacketId = packetId
 	packet.Reason = reader.ReadString()
@@ -26,9 +28,11 @@ func (packet *DisconnectPacket) Read(packetId int, reader *io.PacketReader) pack
 	return packet
 }
 
-func (packet *DisconnectPacket) HandleRead(currentSession *session.Session) packets.Packet {
+func (packet *DisconnectPacket) PostRead(currentSession *session.Session) packets.Packet {
 	return nil
 }
+
+func (packet *DisconnectPacket) PreWrite(currentSession *session.Session) {}
 
 func (packet *DisconnectPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
@@ -36,8 +40,6 @@ func (packet *DisconnectPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.Flush(nil)
 }
 
-func (packet *DisconnectPacket) HandlePreWrite(currentSession *session.Session) {}
-
-func (packet *DisconnectPacket) HandleWrite(currentSession *session.Session) {
+func (packet *DisconnectPacket) PostWrite(currentSession *session.Session) {
 	currentSession.Close()
 }

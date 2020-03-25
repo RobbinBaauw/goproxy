@@ -21,14 +21,20 @@ func NewLoginSuccessPacket(name string, uuid string) packets.Packet {
 	}
 }
 
+func (packet *LoginSuccessPacket) PreRead(currentSession *session.Session) {}
+
 func (packet *LoginSuccessPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	// TODO
 	log.Panic("TODO!")
 	return nil
 }
 
-func (packet *LoginSuccessPacket) HandleRead(currentSession *session.Session) packets.Packet {
+func (packet *LoginSuccessPacket) PostRead(currentSession *session.Session) packets.Packet {
 	return nil
+}
+
+func (packet *LoginSuccessPacket) PreWrite(currentSession *session.Session) {
+	currentSession.CurrentState = session.Play
 }
 
 func (packet *LoginSuccessPacket) Write(currentSession *session.Session) {
@@ -38,8 +44,4 @@ func (packet *LoginSuccessPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.Flush(&currentSession.SharedSecret)
 }
 
-func (packet *LoginSuccessPacket) HandlePreWrite(currentSession *session.Session) {
-	currentSession.CurrentState = session.Play
-}
-
-func (packet *LoginSuccessPacket) HandleWrite(currentSession *session.Session) {}
+func (packet *LoginSuccessPacket) PostWrite(currentSession *session.Session) {}

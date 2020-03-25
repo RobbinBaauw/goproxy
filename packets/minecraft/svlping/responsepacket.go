@@ -63,12 +63,17 @@ func NewResponsePacket() packets.Packet {
 		jsonResponse: string(data),
 	}
 }
+func (packet *ResponsePacket) PreRead(currentSession *session.Session) {}
 
-func (packet *ResponsePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {}
-
-func (packet *ResponsePacket) HandleRead(currentSession *session.Session) packets.Packet {
+func (packet *ResponsePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	return nil
 }
+
+func (packet *ResponsePacket) PostRead(currentSession *session.Session) packets.Packet {
+	return nil
+}
+
+func (packet *ResponsePacket) PreWrite(currentSession *session.Session) {}
 
 func (packet *ResponsePacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
@@ -76,5 +81,4 @@ func (packet *ResponsePacket) Write(currentSession *session.Session) {
 	currentSession.Writer.Flush(nil)
 }
 
-func (packet *ResponsePacket) HandlePreWrite(currentSession *session.Session) {}
-func (packet *ResponsePacket) HandleWrite(currentSession *session.Session)    {}
+func (packet *ResponsePacket) PostWrite(currentSession *session.Session) {}

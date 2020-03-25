@@ -22,6 +22,8 @@ func NewEncryptionResponsePacket(name string) packets.Packet {
 	return nil
 }
 
+func (packet *EncryptionResponsePacket) PreRead(currentSession *session.Session) {}
+
 func (packet *EncryptionResponsePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	packet.PacketId = packetId
 
@@ -34,7 +36,7 @@ func (packet *EncryptionResponsePacket) Read(packetId int, reader *io.PacketRead
 	return packet
 }
 
-func (packet *EncryptionResponsePacket) HandleRead(currentSession *session.Session) packets.Packet {
+func (packet *EncryptionResponsePacket) PostRead(currentSession *session.Session) packets.Packet {
 	verifyToken := encryption.DecryptWithPrivateKey(packet.VerifyToken, encryption.EncryptionDataInstance.RSAKey)
 	if !cmp.Equal(verifyToken, encryption.EncryptionDataInstance.VerifyToken) {
 		log.Panic("Invalid verify token!")
@@ -50,10 +52,10 @@ func (packet *EncryptionResponsePacket) HandleRead(currentSession *session.Sessi
 	return successPacket
 }
 
+func (packet *EncryptionResponsePacket) PreWrite(currentSession *session.Session) {}
+
 func (packet *EncryptionResponsePacket) Write(currentSession *session.Session) {
 	// TODO
 }
 
-func (packet *EncryptionResponsePacket) HandlePreWrite(currentSession *session.Session) {}
-
-func (packet *EncryptionResponsePacket) HandleWrite(currentSession *session.Session) {}
+func (packet *EncryptionResponsePacket) PostWrite(currentSession *session.Session) {}

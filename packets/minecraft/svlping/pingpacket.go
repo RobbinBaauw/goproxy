@@ -12,6 +12,8 @@ type PingPacket struct {
 	Payload  int64
 }
 
+func (packet *PingPacket) PreRead(currentSession *session.Session) {}
+
 func (packet *PingPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	packet.PacketId = packetId
 	packet.Payload = reader.ReadLong()
@@ -19,17 +21,17 @@ func (packet *PingPacket) Read(packetId int, reader *io.PacketReader) packets.Pa
 	return packet
 }
 
-func (packet *PingPacket) HandleRead(currentSession *session.Session) packets.Packet {
+func (packet *PingPacket) PostRead(currentSession *session.Session) packets.Packet {
 	// send pong packet
 	pongPacket := NewPongPacket(packet.Payload)
 
 	return pongPacket
 }
 
+func (packet *PingPacket) PreWrite(currentSession *session.Session) {}
+
 func (packet *PingPacket) Write(currentSession *session.Session) {
 	log.Panic("Proxy should never send a ping packet")
 }
 
-func (packet *PingPacket) HandlePreWrite(currentSession *session.Session) {}
-
-func (packet *PingPacket) HandleWrite(currentSession *session.Session) {}
+func (packet *PingPacket) PostWrite(currentSession *session.Session) {}

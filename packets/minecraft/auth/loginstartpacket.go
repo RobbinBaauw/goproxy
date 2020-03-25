@@ -19,6 +19,8 @@ func NewLoginStartPacket(name string) packets.Packet {
 	}
 }
 
+func (packet *LoginStartPacket) PreRead(currentSession *session.Session) {}
+
 func (packet *LoginStartPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	packet.PacketId = packetId
 	packet.Name = reader.ReadString()
@@ -26,7 +28,7 @@ func (packet *LoginStartPacket) Read(packetId int, reader *io.PacketReader) pack
 	return packet
 }
 
-func (packet *LoginStartPacket) HandleRead(currentSession *session.Session) packets.Packet {
+func (packet *LoginStartPacket) PostRead(currentSession *session.Session) packets.Packet {
 	currentSession.PlayerData.Username = packet.Name
 
 	shouldKick := false // TODO
@@ -42,12 +44,12 @@ func (packet *LoginStartPacket) HandleRead(currentSession *session.Session) pack
 	}
 }
 
+func (packet *LoginStartPacket) PreWrite(currentSession *session.Session) {}
+
 func (packet *LoginStartPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteString(packet.Name)
 	currentSession.Writer.Flush(nil)
 }
 
-func (packet *LoginStartPacket) HandlePreWrite(currentSession *session.Session) {}
-
-func (packet *LoginStartPacket) HandleWrite(currentSession *session.Session) {}
+func (packet *LoginStartPacket) PostWrite(currentSession *session.Session) {}

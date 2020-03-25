@@ -18,11 +18,17 @@ func NewPongPacket(payload int64) packets.Packet {
 	}
 }
 
-func (packet *PongPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {}
+func (packet *PongPacket) PreRead(currentSession *session.Session) {}
 
-func (packet *PongPacket) HandleRead(currentSession *session.Session) packets.Packet {
+func (packet *PongPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	return nil
 }
+
+func (packet *PongPacket) PostRead(currentSession *session.Session) packets.Packet {
+	return nil
+}
+
+func (packet *PongPacket) PreWrite(currentSession *session.Session) {}
 
 func (packet *PongPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
@@ -30,8 +36,6 @@ func (packet *PongPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.Flush(nil)
 }
 
-func (packet *PongPacket) HandlePreWrite(currentSession *session.Session) {}
-
-func (packet *PongPacket) HandleWrite(currentSession *session.Session) {
+func (packet *PongPacket) PostWrite(currentSession *session.Session) {
 	currentSession.Close()
 }

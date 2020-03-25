@@ -28,14 +28,18 @@ func NewEncryptionRequestPacket() packets.Packet {
 	}
 }
 
+func (packet *EncryptionRequestPacket) PreRead(currentSession *session.Session) {}
+
 func (packet *EncryptionRequestPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
 	log.Panic("Proxy should never read an encryption request packet")
 	return nil
 }
 
-func (packet *EncryptionRequestPacket) HandleRead(currentSession *session.Session) packets.Packet {
+func (packet *EncryptionRequestPacket) PostRead(currentSession *session.Session) packets.Packet {
 	return nil
 }
+
+func (packet *EncryptionRequestPacket) PreWrite(currentSession *session.Session) {}
 
 func (packet *EncryptionRequestPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
@@ -50,6 +54,4 @@ func (packet *EncryptionRequestPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.Flush(nil)
 }
 
-func (packet *EncryptionRequestPacket) HandlePreWrite(currentSession *session.Session) {}
-
-func (packet *EncryptionRequestPacket) HandleWrite(currentSession *session.Session) {}
+func (packet *EncryptionRequestPacket) PostWrite(currentSession *session.Session) {}
