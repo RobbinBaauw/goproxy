@@ -66,7 +66,7 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 			break
 		}
 
-		// create reader and read packer
+		// create reader and read packet
 		packet := server.readPacket(currentSession, currentSession.Reader)
 
 		// debug prints
@@ -74,7 +74,14 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 		log.Println("Got packet:", string(out), " of type ", reflect.TypeOf(packet))
 
 		// handle packet
-		packet.HandleRead(currentSession)
+		responsePacket := packet.HandleRead(currentSession)
+
+		//TODO: Maybe make a HandlePreWrite()?
+		// send response packet it needed
+		if responsePacket != nil {
+			responsePacket.Write(currentSession)
+			responsePacket.HandleWrite(currentSession)
+		}
 	}
 }
 

@@ -10,10 +10,11 @@ type RequestPacket struct {
 	PacketId int
 }
 
-func (packet *RequestPacket) HandleRead(currentSession *session.Session) {
+func (packet *RequestPacket) HandleRead(currentSession *session.Session) packets.Packet {
 	// send response packet
 	responsePacket := NewResponsePacket()
-	responsePacket.Write(currentSession)
+
+	return responsePacket
 }
 
 func (packet *RequestPacket) HandleWrite(currentSession *session.Session) {

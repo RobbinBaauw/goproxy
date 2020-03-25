@@ -26,12 +26,12 @@ func (packet *DisconnectPacket) Read(packetId int, reader *io.PacketReader) pack
 	return packet
 }
 
-func (packet *DisconnectPacket) HandleRead(currentSession *session.Session) {
-	panic("implement me")
+func (packet *DisconnectPacket) HandleRead(currentSession *session.Session) packets.Packet {
+	return nil
 }
 
 func (packet *DisconnectPacket) HandleWrite(currentSession *session.Session) {
-	panic("implement me")
+	currentSession.Close()
 }
 
 func (packet *DisconnectPacket) Write(currentSession *session.Session) {

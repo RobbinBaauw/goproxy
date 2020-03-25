@@ -41,8 +41,8 @@ func (packet *ResponsePacket) Read(packetId int, reader *io.PacketReader) packet
 	panic("implement me")
 }
 
-func (packet *ResponsePacket) HandleRead(currentSession *session.Session) {
-	panic("implement me")
+func (packet *ResponsePacket) HandleRead(currentSession *session.Session) packets.Packet {
+	return nil
 }
 
 func (packet *ResponsePacket) HandleWrite(currentSession *session.Session) {}

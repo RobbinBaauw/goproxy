@@ -33,12 +33,12 @@ func (packet *EncryptionRequestPacket) Read(packetId int, reader *io.PacketReade
 	return nil
 }
 
-func (packet *EncryptionRequestPacket) HandleRead(currentSession *session.Session) {
-	panic("implement me")
+func (packet *EncryptionRequestPacket) HandleRead(currentSession *session.Session) packets.Packet {
+	return nil
 }
 
 func (packet *EncryptionRequestPacket) HandleWrite(currentSession *session.Session) {
-	panic("implement me")
+
 }
 
 func (packet *EncryptionRequestPacket) Write(currentSession *session.Session) {

@@ -18,12 +18,12 @@ func NewPongPacket(payload int64) packets.Packet {
 	}
 }
 
-func (packet *PongPacket) HandleRead(currentSession *session.Session) {
-	panic("implement me")
+func (packet *PongPacket) HandleRead(currentSession *session.Session) packets.Packet {
+	return nil
 }
 
 func (packet *PongPacket) HandleWrite(currentSession *session.Session) {
-	panic("implement me")
+	currentSession.Close()
 }
 
 func (packet *PongPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {

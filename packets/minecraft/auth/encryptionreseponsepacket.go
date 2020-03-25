@@ -34,7 +34,7 @@ func (packet *EncryptionResponsePacket) Read(packetId int, reader *io.PacketRead
 	return packet
 }
 
-func (packet *EncryptionResponsePacket) HandleRead(currentSession *session.Session) {
+func (packet *EncryptionResponsePacket) HandleRead(currentSession *session.Session) packets.Packet {
 	verifyToken := encryption.DecryptWithPrivateKey(packet.VerifyToken, encryption.EncryptionDataInstance.RSAKey)
 	if !cmp.Equal(verifyToken, encryption.EncryptionDataInstance.VerifyToken) {
 		log.Panic("Invalid verify token!")
@@ -46,11 +46,12 @@ func (packet *EncryptionResponsePacket) HandleRead(currentSession *session.Sessi
 	currentSession.PlayerData.UUID = "159e238f-c6a5-499f-97bd-cdcdd8012135"
 
 	successPacket := NewLoginSuccessPacket(currentSession.PlayerData.Username, currentSession.PlayerData.UUID)
-	successPacket.Write(currentSession)
+
+	return successPacket
 }
 
 func (packet *EncryptionResponsePacket) HandleWrite(currentSession *session.Session) {
-	panic("implement me")
+
 }
 
 func (packet *EncryptionResponsePacket) Write(currentSession *session.Session) {

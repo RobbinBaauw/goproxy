@@ -12,13 +12,11 @@ type PingPacket struct {
 	Payload  int64
 }
 
-func (packet *PingPacket) HandleRead(currentSession *session.Session) {
+func (packet *PingPacket) HandleRead(currentSession *session.Session) packets.Packet {
 	// send pong packet
 	pongPacket := NewPongPacket(packet.Payload)
-	pongPacket.Write(currentSession)
 
-	// close connection
-	currentSession.Close()
+	return pongPacket
 }
 
 func (packet *PingPacket) HandleWrite(currentSession *session.Session) {

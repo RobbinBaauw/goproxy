@@ -27,8 +27,8 @@ func (packet *LoginSuccessPacket) Read(packetId int, reader *io.PacketReader) pa
 	return nil
 }
 
-func (packet *LoginSuccessPacket) HandleRead(currentSession *session.Session) {
-	panic("implement me")
+func (packet *LoginSuccessPacket) HandleRead(currentSession *session.Session) packets.Packet {
+	return nil
 }
 
 func (packet *LoginSuccessPacket) HandleWrite(currentSession *session.Session) {
@@ -39,6 +39,5 @@ func (packet *LoginSuccessPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteString(packet.Name)
 	currentSession.Writer.WriteString(packet.UUID)
-	packet.HandleWrite(currentSession)
 	currentSession.Writer.Flush(&currentSession.SharedSecret)
 }

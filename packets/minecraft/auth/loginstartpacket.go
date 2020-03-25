@@ -26,20 +26,19 @@ func (packet *LoginStartPacket) Read(packetId int, reader *io.PacketReader) pack
 	return packet
 }
 
-func (packet *LoginStartPacket) HandleRead(currentSession *session.Session) {
+func (packet *LoginStartPacket) HandleRead(currentSession *session.Session) packets.Packet {
 	currentSession.PlayerData.Username = packet.Name
 
 	shouldKick := false // TODO
 	if shouldKick {
 		// send a disconnect packet for now
 		disconnectPacket := NewDisconnectPacket()
-		disconnectPacket.Write(currentSession)
 
-		// close connection
-		currentSession.Close()
+		return disconnectPacket
 	} else {
 		encryptionRequestPacket := NewEncryptionRequestPacket()
-		encryptionRequestPacket.Write(currentSession)
+
+		return encryptionRequestPacket
 	}
 }
 
