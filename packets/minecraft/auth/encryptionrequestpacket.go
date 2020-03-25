@@ -5,7 +5,6 @@ import (
 	"github.com/timanema/goproxy/packets/io"
 	"github.com/timanema/goproxy/server/session"
 	"github.com/timanema/goproxy/util/encryption"
-	"log"
 )
 
 type EncryptionRequestPacket struct {
@@ -28,28 +27,27 @@ func NewEncryptionRequestPacket() packets.Packet {
 	}
 }
 
-func (packet *EncryptionRequestPacket) PreRead(currentSession *session.Session) {}
+func (packet *EncryptionRequestPacket) PreRead(_ *session.Session) {}
 
-func (packet *EncryptionRequestPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
-	log.Panic("Proxy should never read an encryption request packet")
+func (packet *EncryptionRequestPacket) Read(_ int, _ *io.PacketReader, _ int) packets.Packet {
 	return nil
 }
 
-func (packet *EncryptionRequestPacket) PostRead(currentSession *session.Session) packets.Packet {
+func (packet *EncryptionRequestPacket) PostRead(_ *session.Session) packets.Packet {
 	return nil
 }
 
-func (packet *EncryptionRequestPacket) PreWrite(currentSession *session.Session) {}
+func (packet *EncryptionRequestPacket) PreWrite(_ *session.Session) {}
 
-func (packet *EncryptionRequestPacket) Write(currentSession *session.Session) {
-	currentSession.Writer.WriteVarInt(packet.PacketId)
-	currentSession.Writer.WriteString(packet.ServerId)
+func (packet *EncryptionRequestPacket) Write(writer *io.PacketWriter) {
+	writer.WriteVarInt(packet.PacketId)
+	writer.WriteString(packet.ServerId)
 
-	currentSession.Writer.WriteVarInt(packet.PublicKeyLength)
-	currentSession.Writer.WriteBytes(packet.PublicKey)
+	writer.WriteVarInt(packet.PublicKeyLength)
+	writer.WriteBytes(packet.PublicKey)
 
-	currentSession.Writer.WriteVarInt(packet.VerifyTokenLength)
-	currentSession.Writer.WriteBytes(packet.VerifyToken)
+	writer.WriteVarInt(packet.VerifyTokenLength)
+	writer.WriteBytes(packet.VerifyToken)
 }
 
-func (packet *EncryptionRequestPacket) PostWrite(currentSession *session.Session) {}
+func (packet *EncryptionRequestPacket) PostWrite(_ *session.Session) {}

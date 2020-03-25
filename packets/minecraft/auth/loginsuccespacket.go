@@ -21,15 +21,15 @@ func NewLoginSuccessPacket(name string, uuid string) packets.Packet {
 	}
 }
 
-func (packet *LoginSuccessPacket) PreRead(currentSession *session.Session) {}
+func (packet *LoginSuccessPacket) PreRead(_ *session.Session) {}
 
-func (packet *LoginSuccessPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+func (packet *LoginSuccessPacket) Read(_ int, _ *io.PacketReader, _ int) packets.Packet {
 	// TODO
 	log.Panic("TODO!")
 	return nil
 }
 
-func (packet *LoginSuccessPacket) PostRead(currentSession *session.Session) packets.Packet {
+func (packet *LoginSuccessPacket) PostRead(_ *session.Session) packets.Packet {
 	return nil
 }
 
@@ -37,10 +37,10 @@ func (packet *LoginSuccessPacket) PreWrite(currentSession *session.Session) {
 	currentSession.CurrentState = session.Play
 }
 
-func (packet *LoginSuccessPacket) Write(currentSession *session.Session) {
-	currentSession.Writer.WriteVarInt(packet.PacketId)
-	currentSession.Writer.WriteString(packet.UUID)
-	currentSession.Writer.WriteString(packet.Name)
+func (packet *LoginSuccessPacket) Write(writer *io.PacketWriter) {
+	writer.WriteVarInt(packet.PacketId)
+	writer.WriteString(packet.UUID)
+	writer.WriteString(packet.Name)
 }
 
-func (packet *LoginSuccessPacket) PostWrite(currentSession *session.Session) {}
+func (packet *LoginSuccessPacket) PostWrite(_ *session.Session) {}

@@ -18,21 +18,21 @@ func NewPongPacket(payload int64) packets.Packet {
 	}
 }
 
-func (packet *PongPacket) PreRead(currentSession *session.Session) {}
+func (packet *PongPacket) PreRead(_ *session.Session) {}
 
-func (packet *PongPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+func (packet *PongPacket) Read(_ int, _ *io.PacketReader, _ int) packets.Packet {
 	return nil
 }
 
-func (packet *PongPacket) PostRead(currentSession *session.Session) packets.Packet {
+func (packet *PongPacket) PostRead(_ *session.Session) packets.Packet {
 	return nil
 }
 
-func (packet *PongPacket) PreWrite(currentSession *session.Session) {}
+func (packet *PongPacket) PreWrite(_ *session.Session) {}
 
-func (packet *PongPacket) Write(currentSession *session.Session) {
-	currentSession.Writer.WriteVarInt(packet.PacketId)
-	currentSession.Writer.WriteLong(packet.Payload)
+func (packet *PongPacket) Write(writer *io.PacketWriter) {
+	writer.WriteVarInt(packet.PacketId)
+	writer.WriteLong(packet.Payload)
 }
 
 func (packet *PongPacket) PostWrite(currentSession *session.Session) {

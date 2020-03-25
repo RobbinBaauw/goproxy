@@ -19,24 +19,24 @@ func NewDisconnectPacket() packets.Packet {
 	return packet
 }
 
-func (packet *DisconnectPacket) PreRead(currentSession *session.Session) {}
+func (packet *DisconnectPacket) PreRead(_ *session.Session) {}
 
-func (packet *DisconnectPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+func (packet *DisconnectPacket) Read(packetId int, reader *io.PacketReader, _ int) packets.Packet {
 	packet.PacketId = packetId
 	packet.Reason = reader.ReadString()
 
 	return packet
 }
 
-func (packet *DisconnectPacket) PostRead(currentSession *session.Session) packets.Packet {
+func (packet *DisconnectPacket) PostRead(_ *session.Session) packets.Packet {
 	return nil
 }
 
-func (packet *DisconnectPacket) PreWrite(currentSession *session.Session) {}
+func (packet *DisconnectPacket) PreWrite(_ *session.Session) {}
 
-func (packet *DisconnectPacket) Write(currentSession *session.Session) {
-	currentSession.Writer.WriteVarInt(packet.PacketId)
-	currentSession.Writer.WriteString(packet.Reason)
+func (packet *DisconnectPacket) Write(writer *io.PacketWriter) {
+	writer.WriteVarInt(packet.PacketId)
+	writer.WriteString(packet.Reason)
 }
 
 func (packet *DisconnectPacket) PostWrite(currentSession *session.Session) {

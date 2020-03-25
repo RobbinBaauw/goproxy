@@ -63,21 +63,21 @@ func NewResponsePacket() packets.Packet {
 		jsonResponse: string(data),
 	}
 }
-func (packet *ResponsePacket) PreRead(currentSession *session.Session) {}
+func (packet *ResponsePacket) PreRead(_ *session.Session) {}
 
-func (packet *ResponsePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+func (packet *ResponsePacket) Read(_ int, _ *io.PacketReader, _ int) packets.Packet {
 	return nil
 }
 
-func (packet *ResponsePacket) PostRead(currentSession *session.Session) packets.Packet {
+func (packet *ResponsePacket) PostRead(_ *session.Session) packets.Packet {
 	return nil
 }
 
-func (packet *ResponsePacket) PreWrite(currentSession *session.Session) {}
+func (packet *ResponsePacket) PreWrite(_ *session.Session) {}
 
-func (packet *ResponsePacket) Write(currentSession *session.Session) {
-	currentSession.Writer.WriteVarInt(packet.PacketId)
-	currentSession.Writer.WriteString(packet.jsonResponse)
+func (packet *ResponsePacket) Write(writer *io.PacketWriter) {
+	writer.WriteVarInt(packet.PacketId)
+	writer.WriteString(packet.jsonResponse)
 }
 
-func (packet *ResponsePacket) PostWrite(currentSession *session.Session) {}
+func (packet *ResponsePacket) PostWrite(_ *session.Session) {}

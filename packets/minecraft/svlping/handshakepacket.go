@@ -14,9 +14,9 @@ type HandshakePacket struct {
 	NextState       int
 }
 
-func (packet *HandshakePacket) PreRead(currentSession *session.Session) {}
+func (packet *HandshakePacket) PreRead(_ *session.Session) {}
 
-func (packet *HandshakePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+func (packet *HandshakePacket) Read(packetId int, reader *io.PacketReader, _ int) packets.Packet {
 	packet.PacketId = packetId
 	packet.ProtocolVersion = reader.ReadVarInt()
 	packet.ServerAddr = reader.ReadString()
@@ -33,8 +33,8 @@ func (packet *HandshakePacket) PostRead(currentSession *session.Session) packets
 	return nil
 }
 
-func (packet *HandshakePacket) PreWrite(currentSession *session.Session) {}
+func (packet *HandshakePacket) PreWrite(_ *session.Session) {}
 
-func (packet *HandshakePacket) Write(currentSession *session.Session) {}
+func (packet *HandshakePacket) Write(writer *io.PacketWriter) {}
 
-func (packet *HandshakePacket) PostWrite(currentSession *session.Session) {}
+func (packet *HandshakePacket) PostWrite(_ *session.Session) {}

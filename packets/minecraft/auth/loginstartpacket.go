@@ -19,9 +19,9 @@ func NewLoginStartPacket(name string) packets.Packet {
 	}
 }
 
-func (packet *LoginStartPacket) PreRead(currentSession *session.Session) {}
+func (packet *LoginStartPacket) PreRead(_ *session.Session) {}
 
-func (packet *LoginStartPacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+func (packet *LoginStartPacket) Read(packetId int, reader *io.PacketReader, _ int) packets.Packet {
 	packet.PacketId = packetId
 	packet.Name = reader.ReadString()
 
@@ -44,11 +44,11 @@ func (packet *LoginStartPacket) PostRead(currentSession *session.Session) packet
 	}
 }
 
-func (packet *LoginStartPacket) PreWrite(currentSession *session.Session) {}
+func (packet *LoginStartPacket) PreWrite(_ *session.Session) {}
 
-func (packet *LoginStartPacket) Write(currentSession *session.Session) {
-	currentSession.Writer.WriteVarInt(packet.PacketId)
-	currentSession.Writer.WriteString(packet.Name)
+func (packet *LoginStartPacket) Write(writer *io.PacketWriter) {
+	writer.WriteVarInt(packet.PacketId)
+	writer.WriteString(packet.Name)
 }
 
-func (packet *LoginStartPacket) PostWrite(currentSession *session.Session) {}
+func (packet *LoginStartPacket) PostWrite(_ *session.Session) {}

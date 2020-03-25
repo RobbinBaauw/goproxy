@@ -75,7 +75,7 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 		packet.PreRead(currentSession)
 
 		// read packet data
-		packet.Read(packetId, currentSession.Reader)
+		packet.Read(packetId, currentSession.Reader, 0)
 
 		// debug prints
 		out, _ := json.Marshal(packet)
@@ -87,7 +87,7 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 		// send response packet if needed
 		if responsePacket != nil {
 			responsePacket.PreWrite(currentSession)
-			responsePacket.Write(currentSession)
+			responsePacket.Write(currentSession.Writer)
 			currentSession.Writer.Flush()
 			responsePacket.PostWrite(currentSession)
 		}
@@ -106,6 +106,8 @@ func (server *Server) readPacket(currentSession *session.Session, packetReader *
 		return handlers.HandleStatus(packetId), packetId
 	case session.Login:
 		return handlers.HandleLogin(packetId), packetId
+	case session.Play:
+		return handlers.HandlePlay(packetId), packetId
 	default:
 		log.Panic("Unknown session state: ", currentSession.CurrentState)
 		return nil, 0

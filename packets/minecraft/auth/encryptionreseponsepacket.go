@@ -23,9 +23,9 @@ func NewEncryptionResponsePacket(name string) packets.Packet {
 	return nil
 }
 
-func (packet *EncryptionResponsePacket) PreRead(currentSession *session.Session) {}
+func (packet *EncryptionResponsePacket) PreRead(_ *session.Session) {}
 
-func (packet *EncryptionResponsePacket) Read(packetId int, reader *io.PacketReader) packets.Packet {
+func (packet *EncryptionResponsePacket) Read(packetId int, reader *io.PacketReader, _ int) packets.Packet {
 	packet.PacketId = packetId
 
 	packet.SharedSecretLength = reader.ReadVarInt()
@@ -61,10 +61,10 @@ func (packet *EncryptionResponsePacket) PostRead(currentSession *session.Session
 	return successPacket
 }
 
-func (packet *EncryptionResponsePacket) PreWrite(currentSession *session.Session) {}
+func (packet *EncryptionResponsePacket) PreWrite(_ *session.Session) {}
 
-func (packet *EncryptionResponsePacket) Write(currentSession *session.Session) {
+func (packet *EncryptionResponsePacket) Write(writer *io.PacketWriter) {
 	// TODO
 }
 
-func (packet *EncryptionResponsePacket) PostWrite(currentSession *session.Session) {}
+func (packet *EncryptionResponsePacket) PostWrite(_ *session.Session) {}
