@@ -13,12 +13,12 @@ import (
 )
 
 type Server struct {
-	sessions    []*session.Session
+	sessions    map[string]*session.Session
 }
 
 func NewServer() *Server {
 	return &Server{
-		sessions:    make([]*session.Session, 0),
+		sessions:    make(map[string]*session.Session),
 	}
 }
 
@@ -48,7 +48,7 @@ func (server *Server) acceptConnection(conn net.Conn) {
 	newSession.Writer = io.NewPacketWriter(conn)
 	newSession.Reader = io.NewPacketReader(bufio.NewReader(conn))
 
-	server.sessions = append(server.sessions, newSession)
+	server.sessions[newSession.SessionId] = newSession
 	server.acceptPacket(newSession)
 }
 
@@ -58,7 +58,7 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 			log.Print("Client ", (*currentSession.Connection).RemoteAddr().String(), " unexpectedly closed the connection")
 		}
 
-		// TODO: Remove session from memory
+		delete(server.sessions, currentSession.SessionId)
 	}()
 
 	for {

@@ -1,6 +1,7 @@
 package session
 
 import (
+	"github.com/google/uuid"
 	"github.com/timanema/goproxy/packets/io"
 	"log"
 	"net"
@@ -14,6 +15,7 @@ const (
 )
 
 type Session struct {
+	SessionId        string
 	Connection       *net.Conn
 	CurrentState     int
 	Reader           *io.PacketReader
@@ -30,6 +32,10 @@ type PlayerData struct {
 
 func NewSession(conn *net.Conn) *Session {
 	session := new(Session)
+
+	sessionId, _ := uuid.NewUUID()
+	session.SessionId = sessionId.String()
+
 	session.Connection = conn
 	session.CurrentState = Handshaking
 
