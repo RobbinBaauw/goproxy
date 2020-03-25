@@ -78,7 +78,6 @@ func (packet *ResponsePacket) PreWrite(currentSession *session.Session) {}
 func (packet *ResponsePacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteString(packet.jsonResponse)
-	currentSession.Writer.Flush(nil)
 }
 
 func (packet *ResponsePacket) PostWrite(currentSession *session.Session) {}

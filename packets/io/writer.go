@@ -2,33 +2,28 @@ package io
 
 import (
 	"encoding/binary"
-	"github.com/timanema/goproxy/util/encryption"
+	"io"
 	"log"
-	"net"
 )
 
 type PacketWriter struct {
-	conn net.Conn
-	data []byte
+	Writer io.Writer
+	data   []byte
 }
 
-func NewPacketWriter(conn net.Conn) *PacketWriter {
+func NewPacketWriter(writer io.Writer) *PacketWriter {
 	return &PacketWriter{
-		conn: conn,
-		data: make([]byte, 0),
+		Writer: writer,
+		data:   make([]byte, 0),
 	}
 }
 
-func (writer *PacketWriter) Flush(encryptionKey *[]byte) {
+func (writer *PacketWriter) Flush() {
 	writer.data = append(writer.getVarInt(len(writer.data)), writer.data...)
 
 	log.Print("Sending raw: ", writer.data)
 
-	if encryptionKey != nil {
-		writer.data = encryption.Encrypt(encryptionKey, &writer.data)
-	}
-
-	_, _ = writer.conn.Write(writer.data)
+	_, _ = writer.Writer.Write(writer.data)
 	writer.data = make([]byte, 0)
 }
 

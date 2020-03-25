@@ -33,7 +33,6 @@ func (packet *PongPacket) PreWrite(currentSession *session.Session) {}
 func (packet *PongPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteLong(packet.Payload)
-	currentSession.Writer.Flush(nil)
 }
 
 func (packet *PongPacket) PostWrite(currentSession *session.Session) {

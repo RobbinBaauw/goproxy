@@ -15,7 +15,7 @@ type LoginSuccessPacket struct {
 
 func NewLoginSuccessPacket(name string, uuid string) packets.Packet {
 	return &LoginSuccessPacket{
-		PacketId: 0,
+		PacketId: 2,
 		Name:     name,
 		UUID:     uuid,
 	}
@@ -39,9 +39,8 @@ func (packet *LoginSuccessPacket) PreWrite(currentSession *session.Session) {
 
 func (packet *LoginSuccessPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
-	currentSession.Writer.WriteString(packet.Name)
 	currentSession.Writer.WriteString(packet.UUID)
-	currentSession.Writer.Flush(&currentSession.SharedSecret)
+	currentSession.Writer.WriteString(packet.Name)
 }
 
 func (packet *LoginSuccessPacket) PostWrite(currentSession *session.Session) {}

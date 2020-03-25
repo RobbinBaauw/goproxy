@@ -37,7 +37,6 @@ func (packet *DisconnectPacket) PreWrite(currentSession *session.Session) {}
 func (packet *DisconnectPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteString(packet.Reason)
-	currentSession.Writer.Flush(nil)
 }
 
 func (packet *DisconnectPacket) PostWrite(currentSession *session.Session) {

@@ -7,22 +7,22 @@ import (
 )
 
 type PacketReader struct {
-	reader *bufio.Reader
+	Reader *bufio.Reader
 }
 
 func NewPacketReader(reader *bufio.Reader) *PacketReader {
 	packetReader := new(PacketReader)
-	packetReader.reader = reader
+	packetReader.Reader = reader
 
 	return packetReader
 }
 
 func (reader *PacketReader) UpdateReader(newReader *bufio.Reader) {
-	reader.reader = newReader
+	reader.Reader = newReader
 }
 
 func (reader *PacketReader) safeRead() byte {
-	res, err := reader.reader.ReadByte()
+	res, err := reader.Reader.ReadByte()
 
 	if err != nil {
 		log.Panic("Could not read byte: ", err)

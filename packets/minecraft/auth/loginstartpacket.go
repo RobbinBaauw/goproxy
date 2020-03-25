@@ -49,7 +49,6 @@ func (packet *LoginStartPacket) PreWrite(currentSession *session.Session) {}
 func (packet *LoginStartPacket) Write(currentSession *session.Session) {
 	currentSession.Writer.WriteVarInt(packet.PacketId)
 	currentSession.Writer.WriteString(packet.Name)
-	currentSession.Writer.Flush(nil)
 }
 
 func (packet *LoginStartPacket) PostWrite(currentSession *session.Session) {}

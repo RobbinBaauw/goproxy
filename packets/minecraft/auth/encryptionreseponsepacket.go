@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"bufio"
 	"github.com/google/go-cmp/cmp"
 	"github.com/timanema/goproxy/packets"
 	"github.com/timanema/goproxy/packets/io"
@@ -43,11 +44,19 @@ func (packet *EncryptionResponsePacket) PostRead(currentSession *session.Session
 	}
 
 	decryptedSharedSecret := encryption.DecryptWithPrivateKey(packet.SharedSecret, encryption.EncryptionDataInstance.RSAKey)
-	currentSession.SharedSecret = decryptedSharedSecret
+	codec := encryption.NewCFBCodec(&decryptedSharedSecret)
 
 	currentSession.PlayerData.UUID = "159e238f-c6a5-499f-97bd-cdcdd8012135"
 
 	successPacket := NewLoginSuccessPacket(currentSession.PlayerData.Username, currentSession.PlayerData.UUID)
+
+	// set encryption streams
+	codec.Encrypt(currentSession.Writer.Writer)
+	codec.Decrypt(currentSession.Reader.Reader)
+
+	// update readers
+	currentSession.Writer = io.NewPacketWriter(codec.Writer)
+	currentSession.Reader = io.NewPacketReader(bufio.NewReader(codec.Reader))
 
 	return successPacket
 }

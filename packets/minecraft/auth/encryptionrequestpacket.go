@@ -50,8 +50,6 @@ func (packet *EncryptionRequestPacket) Write(currentSession *session.Session) {
 
 	currentSession.Writer.WriteVarInt(packet.VerifyTokenLength)
 	currentSession.Writer.WriteBytes(packet.VerifyToken)
-
-	currentSession.Writer.Flush(nil)
 }
 
 func (packet *EncryptionRequestPacket) PostWrite(currentSession *session.Session) {}

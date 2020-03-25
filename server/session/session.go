@@ -21,7 +21,6 @@ type Session struct {
 	Reader           *io.PacketReader
 	Writer           *io.PacketWriter
 	ConnectionClosed bool
-	SharedSecret     []byte
 	PlayerData       PlayerData
 }
 

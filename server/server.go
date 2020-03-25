@@ -88,6 +88,7 @@ func (server *Server) acceptPacket(currentSession *session.Session) {
 		if responsePacket != nil {
 			responsePacket.PreWrite(currentSession)
 			responsePacket.Write(currentSession)
+			currentSession.Writer.Flush()
 			responsePacket.PostWrite(currentSession)
 		}
 	}
